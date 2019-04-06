@@ -1,5 +1,6 @@
 #include <iostream>
 #include <set>
+#include <map>
 
 #define MIN 0
 #define MAIU 1
@@ -7,13 +8,13 @@
 
 using namespace std;
 
-int tokenize(char token) {
+string tokenize(char token) {
   if (token >= 'a' && token <= 'z')
-    return MIN;
+    return "min";
   if (token >= 'A' && token <= 'Z')
-    return MAIU;
+    return "maiu";
   if (token == ' ')
-    return SPACE;
+    return "space";
 
   printf("ERROR: Invalid token: '%c'! Exiting!\n", token);
   exit(-1);
@@ -31,12 +32,15 @@ int main(int argc, char *argv[ ]) {
     cin >> alphabet[i];
   }
 
-  int table[n_states][n_alphabet];
+  // Current state + token -> next state
+  map< pair <int, string>, int> table;
+
   for (int i = 0; i < n_states; i++) {
     for (int j = 0; j < n_alphabet; j++) {
-      int aux;
-      string aux2;
-      cin >> aux >> aux2 >> table[i][j];
+      int current, next;
+      string token;
+      cin >> current >> token >> next;
+      table[make_pair(current, token)] = next;
     }
   }
 
@@ -53,26 +57,28 @@ int main(int argc, char *argv[ ]) {
     final_states.insert(aux);
   }
 
-  int current_state = initial_state;
-
   getchar(); // Scaping \n
 
+  int current_state = initial_state;
   string word;
-  std::getline(std::cin, word);
+  getline(cin, word);
 
   for (char current_token : word) {
-    if (argv[1]) {
-      printf(">Current state: q%d\n", current_state);
-      printf("-Token read: %c\n", current_token);
-    }
+    printf("> Current state: q%d -> Token read: '%c'\n", current_state, current_token);
 
-    current_state = table[current_state][tokenize(current_token)];
+    auto key = make_pair(current_state, tokenize(current_token));
+    current_state = table[key];
   }
+  printf("\n> Last state: q%d\n", current_state);
+  printf("> Final states: ");
+  for (auto i : final_states)
+    printf("q%d ", i);
+  printf("\n\n");
 
   if (final_states.find(current_state) != final_states.end()) {
-    puts("SUCCESS: Valid input!");
+    printf("SUCCESS: Word '%s' is a valid input!\n", word.c_str());
   } else {
-    puts("FAILURE: Invalid input!");
+    printf("FAILURE: Word '%s' is an ivalid input!\n", word.c_str());
   }
 
   return 0;
