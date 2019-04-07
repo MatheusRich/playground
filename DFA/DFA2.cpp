@@ -14,7 +14,6 @@ int main(int argc, char *argv[]) {
 
   char alphabet[n_alphabet];
   for (int i = 0; i < n_alphabet; i++) {
-    // scanf("%c", &alphabet[i]);
     cin >> alphabet[i];
   }
 
