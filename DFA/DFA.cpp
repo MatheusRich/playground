@@ -24,9 +24,8 @@ int main(int argc, char *argv[ ]) {
   scanf("%d", &n_alphabet);
 
   string alphabet[n_alphabet];
-  // char alphabet[n_alphabet];
+
   for (int i = 0; i < n_alphabet; i++) {
-    // scanf("%c", alphabet[i]);
     cin >> alphabet[i];
   }
 
