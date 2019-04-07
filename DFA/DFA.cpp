@@ -28,12 +28,15 @@ int main(int argc, char *argv[ ]) {
   scanf("%d", &n_alphabet);
 
   string alphabet[n_alphabet];
+  // char alphabet[n_alphabet];
   for (int i = 0; i < n_alphabet; i++) {
+    // scanf("%c", alphabet[i]);
     cin >> alphabet[i];
   }
 
   // Current state + token -> next state
   map< pair <int, string>, int> table;
+
 
   for (int i = 0; i < n_states; i++) {
     for (int j = 0; j < n_alphabet; j++) {
@@ -78,7 +81,7 @@ int main(int argc, char *argv[ ]) {
   if (final_states.find(current_state) != final_states.end()) {
     printf("SUCCESS: Word '%s' is a valid input!\n", word.c_str());
   } else {
-    printf("FAILURE: Word '%s' is an ivalid input!\n", word.c_str());
+    printf("FAILURE: Word '%s' is an invalid input!\n", word.c_str());
   }
 
   return 0;
