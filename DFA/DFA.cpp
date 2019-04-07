@@ -2,10 +2,6 @@
 #include <set>
 #include <map>
 
-#define MIN 0
-#define MAIU 1
-#define SPACE 2
-
 using namespace std;
 
 string tokenize(char token) {
