@@ -4,30 +4,29 @@
 #include <map>
 
 using namespace std;
+
 bool is_final_state(int item, set<int> set) {
   if (set.find(item) != set.end())
     return true;
   return false;
 }
 
-bool automaton(int current_state, string word, map<pair<int, char>, vector<int>> table, set<int> final_states) {
+int automaton(int current_state, string word, map<pair<int, char>, vector<int>> table, set<int> final_states) {
   // printf("> Current state: q%d\n", current_state);
-  if (word.size() < 1) {
-    if (is_final_state(current_state, final_states))
-      return true;
-    else
-      return false;
+  if (word.size() > 0) {
+    char token = word[0];
+    // printf("-> Token read: '%c'\n", token);
+    string new_word = word.erase(0,1);
+    vector<int> possible = table[make_pair(current_state, token)];
+    for(auto state : possible) {
+      // printf("-> Possible state: '%d'\n", state);
+      // printf("-> Word: '%s'\n", word.c_str());
+      int end = automaton(state, new_word, table, final_states);
+      if (is_final_state(end, final_states))
+        return end;
+    }
   }
-
-  char token = word[0];
-  // printf("-> Token read: '%c'\n", token);
-  word.erase(0, 1);
-  vector<int> possible_states = table[make_pair(current_state, token)];
-  for (int state : possible_states) {
-    // printf("-> Possible state: '%d'\n", state);
-    return automaton(state, word, table, final_states);
-  }
-  return false;
+  return current_state;
 }
 
 int main(int argc, char *argv[]) {
@@ -83,14 +82,17 @@ int main(int argc, char *argv[]) {
   string word_without_spaces = word;
   replace(word_without_spaces.begin(), word_without_spaces.end(), ' ', '\\'); // Replaces all spaces to '\'
 
-  bool automaton_is_valid = automaton(initial_state, word_without_spaces, table, final_states);
+  int current_state = initial_state;
+  int last_state = automaton(current_state, word_without_spaces, table, final_states);
 
-  // printf("\n> Final states: ");
+  // printf("> Last state: %d\n", last_state);
+  
+  // printf("\n> Final states: { ");
   // for (auto i : final_states)
   //   printf("q%d ", i);
+  // printf("}\n\n");
 
-  // printf("\n\n");
-  if (automaton_is_valid) {
+  if (is_final_state(last_state, final_states)) {
     printf("SUCCESS: Word '%s' is a valid input!\n", word.c_str());
   } else {
     printf("FAILURE: Word '%s' is an invalid input!\n", word.c_str());
