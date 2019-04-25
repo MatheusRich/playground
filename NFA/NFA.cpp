@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <set>
 #include <map>
+#define INVALID -10000000
 
 using namespace std;
 
@@ -16,16 +17,26 @@ int automaton(int current_state, string word, map<pair<int, char>, vector<int>> 
   if (word.size() > 0) {
     char token = word[0];
     // printf("-> Token read: '%c'\n", token);
-    string new_word = word.erase(0,1);
+    string new_word = word.erase(0, 1);
     vector<int> possible = table[make_pair(current_state, token)];
+    // printf("T%d\n", possible.size());
+    if (possible.size() == 0) {
+      return INVALID;
+    }
+
     for(auto state : possible) {
-      // printf("-> Possible state: '%d'\n", state);
-      // printf("-> Word: '%s'\n", word.c_str());
+      // printf("-> Possible state: '%d':'%d'\n", current_state, state);
+      // printf("-> Word: '%s'\n-----------\n", word.c_str());
       int end = automaton(state, new_word, table, final_states);
-      if (is_final_state(end, final_states))
+      if (is_final_state(end, final_states)) {
+        // puts("MAS OQ É ISSO");
+        // printf("%d", state);
         return end;
+      }
+      current_state = INVALID;
     }
   }
+  // printf("%d\n", current_state);
   return current_state;
 }
 
@@ -85,7 +96,7 @@ int main(int argc, char *argv[]) {
   int current_state = initial_state;
   int last_state = automaton(current_state, word_without_spaces, table, final_states);
 
-  // printf("> Last state: %d\n", last_state);
+  // printf("> Last state: q%d\n", last_state);
   
   // printf("\n> Final states: { ");
   // for (auto i : final_states)
@@ -93,9 +104,11 @@ int main(int argc, char *argv[]) {
   // printf("}\n\n");
 
   if (is_final_state(last_state, final_states)) {
-    printf("SUCCESS: Word '%s' is a valid input!\n", word.c_str());
+    // printf("SUCCESS: Word '%s' is a valid input!\n", word.c_str());
+    puts("Aceito");
   } else {
-    printf("FAILURE: Word '%s' is an invalid input!\n", word.c_str());
+    puts("Rejeito");
+    // printf("FAILURE: Word '%s' is an invalid input!\n", word.c_str());
   }
 
   return 0;
