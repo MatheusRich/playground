@@ -48,11 +48,14 @@ int main() {
 
 
   std::string input = "program(a, b);";
+  puts(("INPUT: '" + input + "'\n").c_str());
 
+  puts("OUTPUT");
+  i = 1;
   while (input.size() > 0) {
     std::string separated = split_by_separators(input, separators);
     input = input.substr(separated.size(), input.size() - 1);
-    puts(("Token: '" + separated + "'").c_str());
+    printf("Token %02d: '%s'\n", i++, separated.c_str());
   }
 
   return 0;
