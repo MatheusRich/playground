@@ -1,6 +1,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <iterator>
 
 #define DIGITS_BEGIN 100
 #define LETTERS_BEGIN 200
@@ -10,7 +11,6 @@
 using namespace std;
 
 map<string, int> terminals;
-map<int, string> iniciaters;
 
 bool is_in_range(int n, int min, int max) {
   return (n >= min && n <= max);
@@ -47,7 +47,6 @@ int main() {
   int i = DIGITS_BEGIN;
   char aux = '0';
   for(int c = 0;c < 10;c++){
-    iniciaters[i] =char_to_str(aux);
     terminals[char_to_str(aux++)] = i++;
 
   }
@@ -55,28 +54,58 @@ int main() {
   i = LETTERS_BEGIN;  
   aux = 'a';
   for(int c = 0;c < 26;c++){
-    iniciaters[i] =char_to_str(aux);
     terminals[char_to_str(aux++)] = i++;
   }
 
   aux = 'A';
   for(int c = 0;c < 26;c++){
-    iniciaters[i] =char_to_str(aux);
     terminals[char_to_str(aux++)] = i++;
   }
 
   i = SEPARATORS_BEGIN;
   terminals[","] = i++;
-  terminals["("] = i++;
-  terminals[")"] = i++;
   terminals[";"] = i++;
   terminals[" "] = i++;
+  terminals["."] = i++;
+  terminals["("] = i++;
+  terminals[")"] = i++;
+  terminals["{"] = i++;
+  terminals["}"] = i++;
   terminals["\n"] = i++;
+  terminals["="] = i++;
+  terminals["<"] = i++;
+  terminals[">"] = i++;
+  terminals["+"] = i++;
+  terminals["-"] = i++;
+  terminals["*"] = i++;
+  terminals[":"] = i++;
+
 
   i = RESERVED_WORDS_BEGIN;
   terminals["program"] = i++;
+  terminals["label"] = i++;
+  terminals["type"] = i++;
+  terminals["var"] = i++;
+  terminals["procedure"] = i++;
+  terminals["function"] = i++;
+  terminals["begin"] = i++;
+  terminals["end"] = i++;
+  terminals["goto"] = i++;
+  terminals["if"] = i++;
+  terminals["then"] = i++;
+  terminals["else"] = i++;
+  terminals["while"] = i++;
+  terminals["do"] = i++;
+  terminals["div"] = i++;
+  terminals["or"] = i++;
+  terminals["and"] = i++;
+  terminals["not"] = i++;
 
-  std::string input = "program(a, b);";
+
+
+  istreambuf_iterator<char> begin(std::cin),end;
+  std::string input(begin,end);
+  
   puts(("INPUT: '" + input + "'\n").c_str());
 
   puts("OUTPUT");
@@ -94,9 +123,13 @@ int main() {
 
   }
 
-  for(auto token : tokens){
-    printf("token %d\n",token);
-    printf("tokenn %s\n",iniciaters[token].c_str());
+  for(auto token : tokens) {
+    if(token != 302) {
+      for(auto &i : terminals) {
+        if(token == i.second)
+          printf("token %s\n",i.first.c_str());
+      }
+    }
   }
   return 0;
 }
