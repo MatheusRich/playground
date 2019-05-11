@@ -12,11 +12,6 @@ using namespace std;
 
 map<string, int> terminals;
 
-bool is_in_range(int n, int min, int max) {
-  return (n >= min && n <= max);
-}
-
-
 std::string char_to_str(char c) {
   return std::string(1, c);
 }
@@ -48,7 +43,6 @@ int main() {
   char aux = '0';
   for(int c = 0;c < 10;c++){
     terminals[char_to_str(aux++)] = i++;
-
   }
 
   i = LETTERS_BEGIN;  
@@ -65,13 +59,11 @@ int main() {
   i = SEPARATORS_BEGIN;
   terminals[","] = i++;
   terminals[";"] = i++;
-  terminals[" "] = i++;
   terminals["."] = i++;
   terminals["("] = i++;
   terminals[")"] = i++;
   terminals["{"] = i++;
   terminals["}"] = i++;
-  terminals["\n"] = i++;
   terminals["="] = i++;
   terminals["<"] = i++;
   terminals[">"] = i++;
@@ -79,6 +71,9 @@ int main() {
   terminals["-"] = i++;
   terminals["*"] = i++;
   terminals[":"] = i++;
+  terminals[" "] = i;
+  terminals["\t"] = i;
+  terminals["\n"] = i;
 
 
   i = RESERVED_WORDS_BEGIN;
