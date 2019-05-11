@@ -1,7 +1,8 @@
-BINFOLDER := bin/
-INCFOLDER := include/
-SRCFOLDER := src/
-OBJFOLDER := obj/
+BINFOLDER := bin
+INCFOLDER := include
+SRCFOLDER := src
+OBJFOLDER := obj
+BINFILE := compiler 
 
 CC := g++
 CFLAGS := -std=c++11 -Wall -pedantic -Wextra -Wno-unused-parameter -Werror=init-self
@@ -9,15 +10,15 @@ CFLAGS := -std=c++11 -Wall -pedantic -Wextra -Wno-unused-parameter -Werror=init-
 SRCFILES := $(wildcard src/*.cpp)
 
 all: $(SRCFILES:src/%.cpp=obj/%.o)
-	$(CC) $(CFLAGS) obj/*.o -o bin/compiler
+	$(CC) $(CFLAGS) $(OBJFOLDER)/*.o -o $(BINFOLDER)/$(BINFILE)
 
-obj/%.o: src/%.cpp
+obj/%.o: $(SRCFOLDER)/%.cpp
 	$(CC) $(CFLAGS) -c $< -o $@ -I./$(INCFOLDER)
 
 .PHONY: clean
 clean:
-	rm -rf obj/*
-	rm -rf bin/*
+	rm -rf $(OBJFOLDER)/*
+	rm -rf $(BINFOLDER)/*
 
 run:
-		bin/binario
+		$(BINFOLDER)/$(BINFILE)

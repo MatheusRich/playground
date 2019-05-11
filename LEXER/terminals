@@ -1,0 +1,46 @@
+LETTERS
+A Z
+a z
+# #
+DIGITS
+0 9
+# #
+SEPARATORS
+,
+;
+.
+(
+)
+{
+}
+=
+<
+>
++
+-
+*
+:
+ 
+\t
+\n
+# #
+RESERVED_WORDS
+program
+label
+type
+var
+procedure
+function
+begin
+end
+goto
+if
+then
+else
+while
+do
+div
+or
+and
+not
+# #
