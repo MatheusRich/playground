@@ -77,6 +77,22 @@ std::string Mint::CurrentCMD() {
   return instructions[p].instruction[CMD];
 }
 
+int Mint::CurrentARG1asInt() {
+  return stoi(instructions[p].instruction[ARG1]);
+}
+
+int Mint::CurrentARG2asInt() {
+  return stoi(instructions[p].instruction[ARG2]);
+}
+
+std::string Mint::CurrentARG1asStr() {
+  return instructions[p].instruction[ARG1];
+}
+
+std::string Mint::CurrentARG2asStr() {
+  return instructions[p].instruction[ARG2];
+}
+
 void Mint::InitProgram() {
   p = 0;
   s = 0;
@@ -95,8 +111,8 @@ void Mint::Execute() {
     }
     else if(CurrentCMD() == "CRCT") {
       s++;
-      std::vector<int>::iterator itPos = stack.begin() + s;
-      this->stack.insert(itPos, stoi(instructions[p].instruction[ARG1]));
+      std::vector<int>::iterator itPos = stack.begin() + s; // This sucks
+      this->stack.insert(itPos, CurrentARG1asInt());
     }
     else if(CurrentCMD() == "SOMA") {
       stack[s-1] = stack[s-1] + stack[s];
@@ -193,11 +209,11 @@ void Mint::Execute() {
       s--;
     }
     else if(CurrentCMD() == "DSVS") {
-      p = labels[instructions[p].instruction[ARG1]] - 1;
+      p = labels[CurrentARG1asStr()] - 1;
     }
     else if(CurrentCMD() == "DSVF") {
       if(stack[s] == 0) {
-        p = labels[instructions[p].instruction[ARG1]] - 1;
+        p = labels[CurrentARG1asStr()] - 1;
       }
       s--;
     }
@@ -215,17 +231,17 @@ void Mint::Execute() {
       s++;
 
       std::vector<int>::iterator itPos = stack.begin() + s;
-      stack.insert(itPos, stack.at(stoi(instructions[p].instruction[ARG1])));
+      stack.insert(itPos, stack.at(CurrentARG1asInt()));
     }
     // FAZER DEPOIS COM ESCOPO
     // else if(CurrentCMD() == "CREN") {
     //   s++;
 
     //   std::vector<int>::iterator itPos = stack.begin() + s;
-    //   stack.insert(itPos, stoi(instructions[p].instruction[ARG1]));
+    //   stack.insert(itPos, CurrentARG1asInt());
     // }
     else if(CurrentCMD() == "ARMZ") {
-      stack[stoi(instructions[p].instruction[ARG1])] = stack[s];
+      stack[CurrentARG1asInt()] = stack[s];
       s--;
     }
   }

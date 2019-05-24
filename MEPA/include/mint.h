@@ -26,6 +26,10 @@ private:
   bool IsLabel(std::string word);
   std::string SplitBySeparators(std::string input);
   std::string CurrentCMD();
+  int CurrentARG1asInt();
+  int CurrentARG2asInt();
+  std::string CurrentARG1asStr();
+  std::string CurrentARG2asStr();
   void ERROR(std::string msg);
 
   void LoadCode(std::string file = CODE_FILE);
