@@ -8,13 +8,16 @@
 #define ARG1 1
 #define ARG2 2
 
+std::string Bold(std::string s) { // TODO: Move this
+  return "\033[1m" + s + "\033[0m";
+}
 
 std::string char_to_str(char c) { // FIXME: Duplicated
   return std::string(1, c);
 }
 
 void Mint::ERROR(std::string msg) { // TODO: improve color handling
-  printf("\033[1;31m[ERROR]\033[0m in \"%s\" at line %d: %s\n", CODE_FILE, p + 1, msg.c_str());
+  printf("\033[1;31m[ERROR]\033[0m in \"%s\" at line %d: %s\n", this->codePath.c_str(), p + 1, Bold(msg).c_str());
   exit(ERROR_CODE);
 }
 
@@ -43,8 +46,15 @@ bool Mint::IsLabel(std::string word) { //TODO: update this to check if !separato
   return false;
 }
 
-void Mint::LoadCode(std::string file) {
-  std::ifstream code_file(file, std::ios::in);
+void Mint::Dump() {
+  puts(Bold("Dumping Stack:").c_str());
+  for(int i = 0; i <= this->s; i++) {
+    printf("[%d]: %d\n", i, this->stack[i]);
+  }
+}
+
+void Mint::LoadCode() {
+  std::ifstream code_file(this->codePath, std::ios::in);
 
   if(not code_file.good()){
     ERROR("Could not open mepa code.");
@@ -233,9 +243,7 @@ void Mint::Execute() {
     }
     else if(CurrentCMD() == "PARA") {
       // DUMP MOSTRAR TODA PILHA
-      for(int i = 0; i <= s; i++) {
-        printf("%d\n", stack[i]); 
-      }
+      Dump();
       break;
     }
     else if(CurrentCMD() == "CRVL") {
@@ -255,10 +263,14 @@ void Mint::Execute() {
       stack[CurrentARG1asInt()] = stack[s];
       s--;
     }
+    else {
+      ERROR("Instruction \"" + CurrentCMD() + "\" does not exist.");
+    }
   }
 }
 
-void Mint::Run() {
+void Mint::Run(std::string file) {
+  this->codePath = file;
   LoadCode();
   InitProgram();
   Execute();
