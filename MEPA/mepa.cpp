@@ -2,24 +2,36 @@
 #include<string>
 #include<map>
 #include<vector>
+#include <iterator>
 #include<set>
 #include <fstream>
+#include <tuple>
 
-std::set<std::string> reserved_words;
+#define CMD 0
+#define ARG1 1
+#define ARG2 2
+#define CODE_FILE "in.mepa"
+
+std::vector<int> stack;
+int s; // topo na pilha || posicao atual na pilha
+int p; // program counter || posicao no codigo || instrucao atual
 
 std::string char_to_str(char c) {
   return std::string(1, c);
 }
+typedef struct command {
+  std::string cmd[3] = {"", "", ""};
+} Command;
 
-bool is_separator(char c) { // maybe input should be a string
-  return (c == ' ' || c == ',');
+bool is_separator(std::string c) { // maybe input should be a string
+  return (c == " " || c == "," || c == "\n");
 }
 
 std::string split_by_separators(std::string input) {
   std::string output = "";
 
   for(char c : input) {
-    if (is_separator(c)) {
+    if (is_separator(char_to_str(c))) {
       if(output.size() == 0) // single separator, no word
         output += c;
       break;
@@ -31,76 +43,192 @@ std::string split_by_separators(std::string input) {
 }
 
 bool is_label(std::string word){
-    if(reserved_words.find(word) != reserved_words.end())
+    if(word.back() == ':')
         return true;
     return false;
 }
 
-
-#define CMD 0
-#define ARG1 1
-#define ARG2 2
-#define CODE_FILE "./in.mepa"
-
-
-
 int main (){
     std::map<std::string,int> labels;
-    std::vector<std::vector<std::string>> instructions;
+    std::vector<Command> instructions;
 
-    reserved_words.insert("INPP");
-    reserved_words.insert("PARA");
-
-    std::string line ="";
-    int line_code = 0;
-
-    puts("aq1ui");
-
-    std::ifstream code_file(CODE_FILE,std::ios::in);
+    std::ifstream code_file(CODE_FILE, std::ios::in);
     if(!code_file.good()){
         exit(-1);
     }
 
-    while(std::getline(code_file,line)){
-        printf("%d",line_code);
-        std::vector<std::string> list;
-        while(line.size() > 0)         {
+    std::string line ="";
+    int line_code = 0;
+
+    while(std::getline(code_file,line)) {
+        Command list;
+        int i = 0;
+        while(line.size() > 0) {
             std::string separated = split_by_separators(line);
             line = line.substr(separated.size(), line.size() - 1);
             if(is_label(separated)){
+                separated.pop_back();
                 labels[separated] = line_code;
             }
-            else{
-                list.push_back(separated);
+            else if(!is_separator(separated)){
+                list.cmd[i] = separated;
+                i++;
             }
         }
-        instructions[line_code++] = list;
+        instructions.push_back(list);
+        line_code++;
     }
     
-    int p =0;
+    p = 0; // program counter || posicao no codigo || instrucao atual
 
-    puts("aq1ui");
-
-    if(instructions[p][CMD] != "INPP"){
-       exit(-1);
+    if(instructions[p].cmd[CMD]!= "INPP") {
+      puts(instructions[p].cmd[CMD].c_str());
+      exit(-1);
     }
-    std::vector<int> stack;
-    int s =0;
-    stack[0] = 42;
-
-    puts("aq1ui");
+    s = 0; // topo na pilha || posicao atual na pilha
+    stack.push_back(0);
 
 
     while(1){
-      if(++p >= instructions.size()){
+      p++;
+      if(p >= instructions.size()) {
         exit(-1);
       }
-      if(instructions[p][CMD] != "PARA"){
-        printf("%d", stack[s]);
+      else if(instructions[p].cmd[CMD] == "CRCT") {
+        s++;
+        std::vector<int>::iterator itPos = stack.begin() + s;
+        stack.insert(itPos, stoi(instructions[p].cmd[ARG1]));
+      }
+      else if(instructions[p].cmd[CMD] == "SOMA") {
+        stack[s-1] = stack[s-1] + stack[s];
+        s--;
+      }
+      else if(instructions[p].cmd[CMD] == "SUBT") {
+        stack[s-1] = stack[s-1] - stack[s];
+        s--;
+      }
+      else if(instructions[p].cmd[CMD] == "MULT") {
+        stack[s-1] = stack[s-1] * stack[s];
+        s--;
+      }
+      else if(instructions[p].cmd[CMD] == "DIVI") {
+        stack[s-1] = stack[s-1] / stack[s];
+        s--;
+      }
+      else if(instructions[p].cmd[CMD] == "INVR") {
+        stack[s] = -(stack[s]);
+      }
+      else if(instructions[p].cmd[CMD] == "CONJ") {
+        if(stack[s-1] == 1 && stack[s] == 1) {
+          stack[s-1] = 1;
+        }
+        else {
+          stack[s-1] = 0;
+        }
+        s--;
+      }
+      else if(instructions[p].cmd[CMD] == "DISJ") {
+        if(stack[s-1] == 1 || stack[s] == 1) {
+          stack[s-1] = 1;
+        }
+        else {
+          stack[s-1] = 0;
+        }
+        s--;
+      }
+      else if(instructions[p].cmd[CMD] == "NEGA") {
+        stack[s] = 1 - stack[s];
+      }
+      else if(instructions[p].cmd[CMD] == "CMME") {
+        if(stack[s-1] < stack[s]) {
+          stack[s-1] = 1;
+        }
+        else {
+          stack[s-1] = 0;
+        }
+        s--;
+      }
+      else if(instructions[p].cmd[CMD] == "CMMA") {
+        if(stack[s-1] > stack[s]) {
+          stack[s-1] = 1;
+        }
+        else {
+          stack[s-1] = 0;
+        }
+        s--;
+      }
+      else if(instructions[p].cmd[CMD] == "CMIG") {
+        if(stack[s-1] == stack[s]) {
+          stack[s-1] = 1;
+        }
+        else {
+          stack[s-1] = 0;
+        }
+        s--;
+      }
+      else if(instructions[p].cmd[CMD] == "CMDG") {
+        if(stack[s-1] != stack[s]) {
+          stack[s-1] = 1;
+        }
+        else {
+          stack[s-1] = 0;
+        }
+        s--;
+      }
+      else if(instructions[p].cmd[CMD] == "CMEG") {
+        if(stack[s-1] <= stack[s]) {
+          stack[s-1] = 1;
+        }
+        else {
+          stack[s-1] = 0;
+        }
+        s--;
+      }
+      else if(instructions[p].cmd[CMD] == "CMAG") {
+        if(stack[s-1] >= stack[s]) {
+          stack[s-1] = 1;
+        }
+        else {
+          stack[s-1] = 0;
+        }
+        s--;
+      }
+      else if(instructions[p].cmd[CMD] == "DSVS") {
+        p = labels[instructions[p].cmd[ARG1]] - 1;
+      }
+      else if(instructions[p].cmd[CMD] == "DSVF") {
+        if(stack[s] == 0) {
+          p = labels[instructions[p].cmd[ARG1]] - 1;
+        }
+        s--;
+      }
+      else if(instructions[p].cmd[CMD] == "NADA") {
+        // NADA
+      }
+      else if(instructions[p].cmd[CMD] == "PARA") {
+        // DUMP MOSTRAR TODA PILHA
+        for(int i = 0; i <= s; i++) {
+          printf("%d\n", stack[i]); 
+        }
         break;
       }
-      // do stuff
+      else if(instructions[p].cmd[CMD] == "CRVL") {
+        s++;
 
+        std::vector<int>::iterator itPos = stack.begin() + s;
+        stack.insert(itPos, stack.at(stoi(instructions[p].cmd[ARG1])));
+      }
+      // FAZER DEPOIS COM ESCOPO
+      // else if(instructions[p].cmd[CMD] == "CREN") {
+      //   s++;
+
+      //   std::vector<int>::iterator itPos = stack.begin() + s;
+      //   stack.insert(itPos, stoi(instructions[p].cmd[ARG1]));
+      // }
+      else if(instructions[p].cmd[CMD] == "ARMZ") {
+        stack[stoi(instructions[p].cmd[ARG1])] = stack[s];
+        s--;
+      }
     }
 
     return 0;
