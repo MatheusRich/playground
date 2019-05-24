@@ -9,12 +9,12 @@
 #define ARG2 2
 
 
-std::string char_to_str(char c) {
+std::string char_to_str(char c) { // FIXME: Duplicated
   return std::string(1, c);
 }
 
 void Mint::ERROR(std::string msg) { // TODO: improve color handling
-  printf("\033[1;31m[ERROR]\033[0m at \"%s\", line %d: %s\n", CODE_FILE, p + 1, msg.c_str());
+  printf("\033[1;31m[ERROR]\033[0m in \"%s\" at line %d: %s\n", CODE_FILE, p + 1, msg.c_str());
   exit(ERROR_CODE);
 }
 
@@ -77,19 +77,30 @@ std::string Mint::CurrentCMD() {
   return instructions[p].instruction[CMD];
 }
 
+void Mint::CheckARGPresence(int arg) {
+  if (instructions[p].instruction[arg] == "") {
+    std::string argPosition = arg == ARG1 ? "first" : "second";
+    ERROR(CurrentCMD() + " is missing its " + argPosition +" argument.");
+  }
+}
+
 int Mint::CurrentARG1asInt() {
+  CheckARGPresence(ARG1);
   return stoi(instructions[p].instruction[ARG1]);
 }
 
 int Mint::CurrentARG2asInt() {
+  CheckARGPresence(ARG2);
   return stoi(instructions[p].instruction[ARG2]);
 }
 
 std::string Mint::CurrentARG1asStr() {
+  CheckARGPresence(ARG1);
   return instructions[p].instruction[ARG1];
 }
 
 std::string Mint::CurrentARG2asStr() {
+  CheckARGPresence(ARG2);
   return instructions[p].instruction[ARG2];
 }
 

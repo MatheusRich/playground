@@ -6,7 +6,7 @@
 #include <map>
 #include <vector>
 
-#define CODE_FILE "in.mepa"
+#define CODE_FILE "example.mepa"
 #define STACK_INITIAL_VALUE -999999
 
 typedef struct command {
@@ -31,6 +31,7 @@ private:
   std::string CurrentARG1asStr();
   std::string CurrentARG2asStr();
   void ERROR(std::string msg);
+  void CheckARGPresence(int arg);
 
   void LoadCode(std::string file = CODE_FILE);
   void InitProgram();
