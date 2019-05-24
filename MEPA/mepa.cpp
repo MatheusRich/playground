@@ -1,9 +1,9 @@
-#include<iostream>
-#include<string>
-#include<map>
-#include<vector>
+#include <iostream>
+#include <string>
+#include <map>
+#include <vector>
 #include <iterator>
-#include<set>
+#include <set>
 #include <fstream>
 #include <tuple>
 
@@ -14,8 +14,15 @@
 #define CODE_FILE "in.mepa"
 
 std::vector<int> stack;
+typedef struct command {
+  std::string cmd[3] = {"", "", ""};
+} Command;
+
 int s; // topo na pilha || posicao atual na pilha
 int p; // program counter || posicao no codigo || instrucao atual
+
+std::map<std::string, int> labels;
+std::vector<Command> instructions;
 
 void ERROR(std::string msg) { // TODO: improve color handling
   printf("\033[1;31m[ERROR]\033[0m at \"%s\", line %d: %s\n", CODE_FILE, p + 1, msg.c_str());
@@ -25,9 +32,6 @@ void ERROR(std::string msg) { // TODO: improve color handling
 std::string char_to_str(char c) {
   return std::string(1, c);
 }
-typedef struct command {
-  std::string cmd[3] = {"", "", ""};
-} Command;
 
 bool is_separator(std::string c) { // maybe input should be a string
   return (c == " " || c == "," || c == "\n");
@@ -54,13 +58,15 @@ bool is_label(std::string word){
     return false;
 }
 
+std::string current_cmd() {
+  return instructions[p].cmd[CMD];
+}
+
 int main (){
-    std::map<std::string,int> labels;
-    std::vector<Command> instructions;
 
     std::ifstream code_file(CODE_FILE, std::ios::in);
     if(!code_file.good()){
-        exit(-1);
+      ERROR("Could not open mepa code.");
     }
 
     std::string line ="";
@@ -87,9 +93,10 @@ int main (){
     
     p = 0; // program counter || posicao no codigo || instrucao atual
 
-    if(instructions[p].cmd[CMD]!= "INPP") {
-      puts(instructions[p].cmd[CMD].c_str());
-      exit(-1);
+    if(current_cmd() != "INPP") {
+      ERROR("The first instruction should be \"INPP\", but it was \"" + current_cmd() + "\".");
+      // puts(current_cmd().c_str());
+      // exit(-1);
     }
     s = 0; // topo na pilha || posicao atual na pilha
     stack.push_back(0);
@@ -100,31 +107,31 @@ int main (){
       if(p >= instructions.size()) {
         ERROR("Unexpected end of file.");
       }
-      else if(instructions[p].cmd[CMD] == "CRCT") {
+      else if(current_cmd() == "CRCT") {
         s++;
         std::vector<int>::iterator itPos = stack.begin() + s;
         stack.insert(itPos, stoi(instructions[p].cmd[ARG1]));
       }
-      else if(instructions[p].cmd[CMD] == "SOMA") {
+      else if(current_cmd() == "SOMA") {
         stack[s-1] = stack[s-1] + stack[s];
         s--;
       }
-      else if(instructions[p].cmd[CMD] == "SUBT") {
+      else if(current_cmd() == "SUBT") {
         stack[s-1] = stack[s-1] - stack[s];
         s--;
       }
-      else if(instructions[p].cmd[CMD] == "MULT") {
+      else if(current_cmd() == "MULT") {
         stack[s-1] = stack[s-1] * stack[s];
         s--;
       }
-      else if(instructions[p].cmd[CMD] == "DIVI") {
+      else if(current_cmd() == "DIVI") {
         stack[s-1] = stack[s-1] / stack[s];
         s--;
       }
-      else if(instructions[p].cmd[CMD] == "INVR") {
+      else if(current_cmd() == "INVR") {
         stack[s] = -(stack[s]);
       }
-      else if(instructions[p].cmd[CMD] == "CONJ") {
+      else if(current_cmd() == "CONJ") {
         if(stack[s-1] == 1 && stack[s] == 1) {
           stack[s-1] = 1;
         }
@@ -133,7 +140,7 @@ int main (){
         }
         s--;
       }
-      else if(instructions[p].cmd[CMD] == "DISJ") {
+      else if(current_cmd() == "DISJ") {
         if(stack[s-1] == 1 || stack[s] == 1) {
           stack[s-1] = 1;
         }
@@ -142,10 +149,10 @@ int main (){
         }
         s--;
       }
-      else if(instructions[p].cmd[CMD] == "NEGA") {
+      else if(current_cmd() == "NEGA") {
         stack[s] = 1 - stack[s];
       }
-      else if(instructions[p].cmd[CMD] == "CMME") {
+      else if(current_cmd() == "CMME") {
         if(stack[s-1] < stack[s]) {
           stack[s-1] = 1;
         }
@@ -154,7 +161,7 @@ int main (){
         }
         s--;
       }
-      else if(instructions[p].cmd[CMD] == "CMMA") {
+      else if(current_cmd() == "CMMA") {
         if(stack[s-1] > stack[s]) {
           stack[s-1] = 1;
         }
@@ -163,7 +170,7 @@ int main (){
         }
         s--;
       }
-      else if(instructions[p].cmd[CMD] == "CMIG") {
+      else if(current_cmd() == "CMIG") {
         if(stack[s-1] == stack[s]) {
           stack[s-1] = 1;
         }
@@ -172,7 +179,7 @@ int main (){
         }
         s--;
       }
-      else if(instructions[p].cmd[CMD] == "CMDG") {
+      else if(current_cmd() == "CMDG") {
         if(stack[s-1] != stack[s]) {
           stack[s-1] = 1;
         }
@@ -181,7 +188,7 @@ int main (){
         }
         s--;
       }
-      else if(instructions[p].cmd[CMD] == "CMEG") {
+      else if(current_cmd() == "CMEG") {
         if(stack[s-1] <= stack[s]) {
           stack[s-1] = 1;
         }
@@ -190,7 +197,7 @@ int main (){
         }
         s--;
       }
-      else if(instructions[p].cmd[CMD] == "CMAG") {
+      else if(current_cmd() == "CMAG") {
         if(stack[s-1] >= stack[s]) {
           stack[s-1] = 1;
         }
@@ -199,39 +206,39 @@ int main (){
         }
         s--;
       }
-      else if(instructions[p].cmd[CMD] == "DSVS") {
+      else if(current_cmd() == "DSVS") {
         p = labels[instructions[p].cmd[ARG1]] - 1;
       }
-      else if(instructions[p].cmd[CMD] == "DSVF") {
+      else if(current_cmd() == "DSVF") {
         if(stack[s] == 0) {
           p = labels[instructions[p].cmd[ARG1]] - 1;
         }
         s--;
       }
-      else if(instructions[p].cmd[CMD] == "NADA") {
+      else if(current_cmd() == "NADA") {
         // NADA
       }
-      else if(instructions[p].cmd[CMD] == "PARA") {
+      else if(current_cmd() == "PARA") {
         // DUMP MOSTRAR TODA PILHA
         for(int i = 0; i <= s; i++) {
           printf("%d\n", stack[i]); 
         }
         break;
       }
-      else if(instructions[p].cmd[CMD] == "CRVL") {
+      else if(current_cmd() == "CRVL") {
         s++;
 
         std::vector<int>::iterator itPos = stack.begin() + s;
         stack.insert(itPos, stack.at(stoi(instructions[p].cmd[ARG1])));
       }
       // FAZER DEPOIS COM ESCOPO
-      // else if(instructions[p].cmd[CMD] == "CREN") {
+      // else if(current_cmd() == "CREN") {
       //   s++;
 
       //   std::vector<int>::iterator itPos = stack.begin() + s;
       //   stack.insert(itPos, stoi(instructions[p].cmd[ARG1]));
       // }
-      else if(instructions[p].cmd[CMD] == "ARMZ") {
+      else if(current_cmd() == "ARMZ") {
         stack[stoi(instructions[p].cmd[ARG1])] = stack[s];
         s--;
       }
