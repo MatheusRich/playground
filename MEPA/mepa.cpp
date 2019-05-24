@@ -7,6 +7,7 @@
 #include <fstream>
 #include <tuple>
 
+#define ERROR_CODE -1
 #define CMD 0
 #define ARG1 1
 #define ARG2 2
@@ -15,6 +16,11 @@
 std::vector<int> stack;
 int s; // topo na pilha || posicao atual na pilha
 int p; // program counter || posicao no codigo || instrucao atual
+
+void ERROR(std::string msg) { // TODO: improve color handling
+  printf("\033[1;31m[ERROR]\033[0m at \"%s\", line %d: %s\n", CODE_FILE, p + 1, msg.c_str());
+  exit(ERROR_CODE);
+}
 
 std::string char_to_str(char c) {
   return std::string(1, c);
@@ -92,7 +98,7 @@ int main (){
     while(1){
       p++;
       if(p >= instructions.size()) {
-        exit(-1);
+        ERROR("Unexpected end of file.");
       }
       else if(instructions[p].cmd[CMD] == "CRCT") {
         s++;
