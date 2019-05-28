@@ -20,6 +20,7 @@ private:
   int p;
   std::map<std::string, int> labels;
   std::vector<int> stack;
+  std::vector<int> dtack;
   std::vector<Command> instructions;
   std::string codePath;
 

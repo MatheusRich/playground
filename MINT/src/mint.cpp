@@ -118,6 +118,7 @@ void Mint::InitProgram() {
   p = 0;
   s = 0;
   stack.push_back(STACK_INITIAL_VALUE);
+  dtack.push_back(0);
 
   if (CurrentCMD() != "INPP") {
     ERROR("The first instruction should be \"INPP\", but it was \"" + CurrentCMD() + "\".");
@@ -250,24 +251,50 @@ void Mint::Execute() {
       s++;
 
       std::vector<int>::iterator itPos = stack.begin() + s;
-      stack.insert(itPos, stack.at(CurrentARG1asInt()));
+      stack.insert(itPos, stack.at(dtack[CurrentARG1asInt()]+CurrentARG2asInt()));
     }
-    // FAZER DEPOIS COM ESCOPO
-    // else if(CurrentCMD() == "CREN") {
-    //   s++;
 
-    //   std::vector<int>::iterator itPos = stack.begin() + s;
-    //   stack.insert(itPos, CurrentARG1asInt());
-    // }
-    else if(CurrentCMD() == "ARMZ") {
+    else if(CurrentCMD() == "CREN") {
+      s++;      
+      std::vector<int>::iterator itPos = stack.begin() + s;
+      stack.insert(itPos, dtack[CurrentARG1asInt()]+CurrentARG2asInt());
+    }
+    
+    else if(CurrentCMD() == "ARMZ"){
       stack[CurrentARG1asInt()] = stack[s];
       s--;
     }
-    else {
-      ERROR("Instruction \"" + CurrentCMD() + "\" does not exist.");
+
+    else if(CurrentCMD() == "LEIT"){
+      s++;
+      std::vector<int>::iterator itPos = stack.begin() + s;
+      int aux;
+      scanf("%d",&aux);
+      stack.insert(itPos, aux);
     }
-  }
+    else if(CurrentCMD() == "IMPR"){
+      printf("%d\n",stack[s]); // se nao tiver que ter o barra ene entao nao tem, beleza ?
+      s--;
+    }
+    else if(CurrentCMD() == "AMEM"){
+      s += CurrentARG1asInt();
+      stack.resize(s+1);
+     }
+    else if(CurrentCMD() == "DMEM"){
+            s -= CurrentARG1asInt();
+         }
+
+                                        else if( CurrentCMD() == "ENRT"){
+                                          s = dtack[CurrentARG1asInt()] + CurrentARG2asInt() - 1;
 }
+
+
+
+             else {
+ERROR("Instruction \"" + CurrentCMD() + "\" does not exist.");
+}
+                                                                                                                                          }
+  }
 
 void Mint::Run(std::string file) {
   this->codePath = file;
