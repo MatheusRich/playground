@@ -17,7 +17,7 @@ terminals_list Lexer::ReadRange(int begin_code, std::vector<char_range> ranges){
     return terminals;
 }
 
-terminals_list Lexer::ReadList(int begin_code,std::vector<std::string> word_list){
+terminals_list Lexer::ReadList(int begin_code, std::vector<std::string> word_list){
     terminals_list terminals;
     for(auto word : word_list){
         terminals[word] = begin_code++;
@@ -35,35 +35,49 @@ terminals_list Lexer::LoadTerminals(){
             if(terminal_type == "LETTERS"){
                 std::vector<char_range> ranges;
                 while(1){
-                    char aux[4];
-                    terminals_file.read(aux,4*sizeof(char));
-                    printf("read from terminals file: %c %c\n",aux[0],aux[2]);
-                    if(aux[0] == '#'){
+                    char line[4];
+                    terminals_file.read(line, 4 * sizeof(char));
+                    // printf("read from terminals file: %c %c\n",line[0],line[2]);
+                    if(line[0] == '#'){
                         break;
                     }
-                    ranges.push_back(std::make_pair(aux[0],aux[2]));
+                    ranges.push_back(std::make_pair(line[0], line[2]));
                 }
-                terminals_list range_terminals = ReadRange(LETTERS_CODE,ranges);
+                terminals_list range_terminals = ReadRange(LETTERS_CODE, ranges);
                 terminals.insert(range_terminals.begin(),range_terminals.end());
             }
             else if(terminal_type == "DIGITS"){
                 std::vector<char_range> ranges;
                 while(1){
-                    char aux[4];
-                    terminals_file.read(aux,4*sizeof(char));
-                    printf("read from terminals file: %c %c\n",aux[0],aux[2]);
-                    if(aux[0] == '#'){
+                    char line[4];
+                    terminals_file.read(line, 4 * sizeof(char));
+                    // printf("read from terminals file: %c %c\n",line[0],line[2]);
+                    if(line[0] == '#'){
                         break;
                     }
-                    ranges.push_back(std::make_pair(aux[0],aux[2]));
+                    ranges.push_back(std::make_pair(line[0],line[2]));
                 }
-                terminals_list range_terminals = ReadRange(DIGITS_CODE,ranges);
+                terminals_list range_terminals = ReadRange(DIGITS_CODE, ranges);
                 terminals.insert(range_terminals.begin(),range_terminals.end());
             }
             else if(terminal_type == "SEPARATORS"){
+
             }
             else if(terminal_type == "RESERVED_WORDS"){
-                
+                std::vector<std::string> words;
+
+                while (1) {
+                    char cLine[256];
+                    terminals_file.getline(cLine, 256);
+                    // puts(cLine);
+
+                    if (cLine[0] == '#')
+                        break;
+
+                    words.push_back(cLine);
+                }
+                terminals_list wordTerminals = ReadList(RESERVED_WORDS_CODE, words);
+                terminals.insert(wordTerminals.begin(), wordTerminals.end());
             }
         }
     }

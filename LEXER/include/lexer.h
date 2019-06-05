@@ -1,5 +1,6 @@
 #ifndef LEXER_H
 #define LEXER_H
+
 #define TERMINALS_FILE "./terminals"
 #define LETTERS_CODE 100
 #define DIGITS_CODE 200
@@ -10,9 +11,8 @@
 #include <vector>
 #include <string>
 
-
-typedef std::pair<char,char> char_range;
-typedef std::map<std::string,int> terminals_list;
+typedef std::pair<char, char> char_range;
+typedef std::map<std::string, int> terminals_list;
 
 // to do remove static from read terminals functions 
 class Lexer {
@@ -22,6 +22,7 @@ private:
 
 public:
     static terminals_list LoadTerminals();
+    // static void LoadCode();
 };
 
 #endif
