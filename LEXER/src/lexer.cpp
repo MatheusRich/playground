@@ -25,7 +25,7 @@ terminals_list Lexer::ReadList(int begin_code, std::vector<std::string> word_lis
     return terminals;
 }
 
-terminals_list Lexer::LoadTerminals(){
+terminals_list Lexer::LoadTerminals(){ // FIXME: Yes, this is not DRY. But we got no time to fix it
     terminals_list terminals;
     std::ifstream terminals_file(TERMINALS_FILE,std::ios::in);
     if(terminals_file.good()){
@@ -60,21 +60,56 @@ terminals_list Lexer::LoadTerminals(){
                 terminals_list range_terminals = ReadRange(DIGITS_CODE, ranges);
                 terminals.insert(range_terminals.begin(),range_terminals.end());
             }
-            else if(terminal_type == "SEPARATORS"){
+            else if(terminal_type == "SEPARATORS") {
+                std::vector<std::string> separators;
 
+                while (1) {
+                    char line[4];
+                    terminals_file.getline(line, 4);
+                    char separator = line[0];
+
+                    if (separator == '\\') {
+                        char c = line[1];
+                        switch (c) {
+                        case 'n':
+                            separator = '\n';
+                            break;
+
+                        case 't':
+                            separator = '\t';
+                            break;
+                        
+                        default:
+                            std::string msg = "ERROR: invalid separator '\\";
+                            msg += c;
+                            msg +=  + "'";
+                            puts(msg.c_str());
+                            exit(-1);
+                        }
+                    }
+
+                    // printf("'%c'\n", separator);
+
+                    if (separator == '#')
+                        break;
+
+                    separators.push_back(char_to_str(separator));
+                }
+                terminals_list separatorTerminals = ReadList(SEPARATORS_CODE, separators);
+                terminals.insert(separatorTerminals.begin(), separatorTerminals.end());
             }
-            else if(terminal_type == "RESERVED_WORDS"){
+            else if(terminal_type == "RESERVED_WORDS") {
                 std::vector<std::string> words;
 
                 while (1) {
-                    char cLine[256];
-                    terminals_file.getline(cLine, 256);
-                    // puts(cLine);
+                    char line[256];
+                    terminals_file.getline(line, 256);
+                    // puts(line);
 
-                    if (cLine[0] == '#')
+                    if (line[0] == '#')
                         break;
 
-                    words.push_back(cLine);
+                    words.push_back(line);
                 }
                 terminals_list wordTerminals = ReadList(RESERVED_WORDS_CODE, words);
                 terminals.insert(wordTerminals.begin(), wordTerminals.end());
