@@ -89,7 +89,7 @@ std::string Mint::CurrentCMD() {
 
 void Mint::CheckARGPresence(int arg) {
   if (instructions[p].instruction[arg] == "") {
-    std::string argPosition = arg == ARG1 ? "first" : "second";
+    std::string argPosition = (arg == ARG1 ? "first" : "second");
     ERROR(CurrentCMD() + " is missing its " + argPosition +" argument.");
   }
 }
@@ -282,19 +282,15 @@ void Mint::Execute() {
      }
     else if(CurrentCMD() == "DMEM"){
             s -= CurrentARG1asInt();
-         }
-
-                                        else if( CurrentCMD() == "ENRT"){
-                                          s = dtack[CurrentARG1asInt()] + CurrentARG2asInt() - 1;
-}
-
-
-
-             else {
-ERROR("Instruction \"" + CurrentCMD() + "\" does not exist.");
-}
-                                                                                                                                          }
+    }
+    else if( CurrentCMD() == "ENRT"){
+      s = dtack[CurrentARG1asInt()] + CurrentARG2asInt() - 1;
+    }
+    else {
+      ERROR("Instruction \"" + CurrentCMD() + "\" does not exist.");
+    }
   }
+}
 
 void Mint::Run(std::string file) {
   this->codePath = file;
