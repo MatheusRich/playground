@@ -286,6 +286,37 @@ void Mint::Execute() {
     else if( CurrentCMD() == "ENRT"){
       s = dtack[CurrentARG1asInt()] + CurrentARG2asInt() - 1;
     }
+    else if( CurrentCMD() == "ARMI" ){
+      int a = dtack[CurrentARG1asInt()] + CurrentARG2asInt();
+      int b = stack[a];
+      stack[b] = stack[s];
+      
+      s --;
+    }
+    else if( CurrentCMD() == "CHPR" ){
+      std::vector<int>::iterator itPos = stack.begin() + (s+1);
+      stack.insert(itPos, (p+1));
+      
+      s += 2;
+      
+      itPos = stack.begin() + s;
+      stack.insert(itPos, CurrentARG2asInt());
+
+      p = CurrentARG1asInt()-1;
+
+    }
+    else if( CurrentCMD() == "ENPR" ){
+      s++;
+      std::vector<int>::iterator itPos = stack.begin() + (s+1);
+      stack.insert(itPos, dtack[CurrentARG1asInt()]);
+
+      dtack[CurrentARG1asInt()] = s+1;
+    }
+    else if( CurrentCMD() == "RTPR" ){
+      dtack[CurrentARG1asInt()] = stack[s];
+      p = stack[s-2] - 1;
+      s = s - (CurrentARG2asInt() + 3);
+    }
     else {
       ERROR("Instruction \"" + CurrentCMD() + "\" does not exist.");
     }
