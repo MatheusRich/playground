@@ -17,13 +17,26 @@ defmodule Portal do
   end
 
   @doc """
-  Pushes data to the right in the given `portal`.
+  Pushes data following the given directions.
   """
-  def push_right(portal) do
-    case Portal.Door.pop(portal.left) do
+  def push(from, to) do
+    case Portal.Door.pop(from) do
       :error -> :ok
-      {:ok, h} -> Portal.Door.push(portal.right, h)
+      {:ok, h} -> Portal.Door.push(to, h)
     end
+  end
+
+  def push_right(portal) do
+    push(portal.left, portal.right)
+
+    portal
+  end
+
+  @doc """
+  Pushes data to the left in the given `portal`.
+  """
+  def push_left(portal) do
+    push(portal.right, portal.left)
 
     portal
   end
