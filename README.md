@@ -4,3 +4,6 @@ This repository is just for fun! Here I try new programming languages, save some
 ## Contents
 
 * **[C++](C++)**
+* **[Crystal](Crystal)**
+* **[Elixir](Elixir)**
+<!-- * **[Rust](Rust)** -->
