@@ -25,7 +25,7 @@ OptionParser.parse do |parser|
   end
 
   parser.on "-g NAME", "--goodbye_hello=NAME", "Say hello to whoever you want" do |name|
-    commands.hello(name)
+    commands.hello(to: name)
     exit
   end
 

@@ -1,3 +1,5 @@
+require "./macros"
+
 class Commands
   private THE_BEATLES = [
     "John Lennon",
@@ -6,13 +8,19 @@ class Commands
     "Ringo Starr",
   ]
 
-  WITH_ERROR = -1
+  private OPTIONS = {
+    :should_shout       => false,
+    :strawberry_mode_on => false,
+  }
+
+  private WITH_ERROR = -1
+
+  {% for option in OPTIONS %}
+    define_option_property {{option.id}}
+  {% end %}
 
   def initialize
-    @options = {
-      :should_shout       => false,
-      :strawberry_mode_on => false,
-    }
+    @options = OPTIONS
   end
 
   def version
@@ -32,18 +40,18 @@ class Commands
     @options[:strawberry_mode_on] = true
   end
 
-  def default
-    the_beatles
-  end
+  def hello(to)
+    return if to.empty?
 
-  def hello(person)
-    return if person.empty?
-
-    say_hello(to: person)
+    say_hello(to: to)
   end
 
   def random_hello
     say_hello(to: THE_BEATLES.sample)
+  end
+
+  def default
+    the_beatles
   end
 
   def missing_option(option_flag, parser)
@@ -86,13 +94,5 @@ class Commands
 
   private def formatted_name(member_name)
     should_shout? ? member_name.upcase : member_name
-  end
-
-  private def should_shout?
-    @options[:should_shout]
-  end
-
-  private def strawberry_mode_on?
-    @options[:strawberry_mode_on]
   end
 end
