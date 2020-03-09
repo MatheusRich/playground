@@ -15,7 +15,7 @@ class Commands
 
   private WITH_ERROR = -1
 
-  {% for option in OPTIONS %}
+  {% for option in OPTIONS.keys %}
     define_option_property {{option.id}}
   {% end %}
 
