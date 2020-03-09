@@ -8,8 +8,10 @@ This is just a simple project based on [Crystal's CLI Tutorial](https://crystal-
 Run it with `crystal cli.cr`. To see all available options run `crystal cli.cr -- -h`
 
 # TO DOs
+ - static analizer
  - specs
  - turn into a shard
+ - CI
 
 # Info
 Crystal 0.33.0 [612825a53] (2020-02-14)
