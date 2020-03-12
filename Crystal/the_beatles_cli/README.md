@@ -10,6 +10,7 @@ Run it with `crystal cli.cr`. To see all available options run `crystal cli.cr -
 # TO DOs
  - static analizer
  - specs
+ - Docs
  - turn into a shard
  - CI
 
