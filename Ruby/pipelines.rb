@@ -33,5 +33,5 @@ pp phrase.then(&scream >> capitalize >> split_by_space >> add_emotion >> join)
 # Current syntax v2
 pp (scream >> capitalize >> split_by_space >> add_emotion >> join).call(phrase)
 
-# Syntax sugar: Removes the '&'. Ideally this would be an token like |>
+# Syntax sugar: Removes the '&'. Ideally this would be a token like |>
 pp phrase.and_then(scream >> capitalize >> split_by_space >> add_emotion >> join)
