@@ -9,7 +9,7 @@ class Stylesheet
     final = ''
 
     hash.each do |(key, value)|
-      style = key.to_s.gsub('_', '-') + ':' + value + ';'
+      style = key.to_s.gsub('_', '-') + ':' + value.to_s + ';'
 
       final += style
     end
